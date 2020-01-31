@@ -1,2 +1,8 @@
-sanic
-jinja2
+sanic==19.12.2
+sanic-auth==0.2.0
+sanic_session==0.6.0
+jinja2==2.11.0
+peewee==3.13.1
+psycopg2-binary
+aiopg
+pytest==5.1.2
