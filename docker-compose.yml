@@ -1,0 +1,30 @@
+version: '3.2'
+
+volumes:
+  postgres_data: {}
+
+services:
+  postgres:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
+    ports:
+      - "35432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    environment:
+      - COMPOSE_CONVERT_WINDOWS_PATHS=1
+    tty: true
