@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz {{ name }}{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="columns">
+
+    <div class="text-center column col-12 my-2">
+        <h1>Доступные тесты</h1>
+    </div>
+
+    <div class="column col-12">
+        <div class="columns">
+            {% for i in quizzes %}
+            <div class="column col-12">
+                <div class="hero hero-sm bg-gray my-2">
+                    <div class="hero-body">
+                        <div class="columns">
+                            <div class="column col-12">
+                                <h2>{{ loop.index }}. <a href="/quiz/{{ i.id }}">{{ i.quiz_name }}</a></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

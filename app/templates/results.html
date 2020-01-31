@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Результат{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="columns">
+
+    <div class="text-center column col-12 my-2">
+        <h1>Результат</h1>
+    </div>
+
+    <div class="column col-12">
+            <div class="columns">
+                <div class="column col-12">
+                    <div class="hero hero-sm bg-gray my-2">
+                        <div class="hero-body">
+                            <div class="form-group">
+                                <div class="columns">
+                                    <div class="column col-12 text-center">
+                                        <h3>{{ correct }} из {{ total }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+{% endblock %}

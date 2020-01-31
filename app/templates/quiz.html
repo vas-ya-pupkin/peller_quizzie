@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz{{ data.quiz_title }}{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="columns">
+
+    <div class="text-center column col-12 my-2">
+        <h1>{{ data.quiz_title }}</h1>
+    </div>
+
+    <div class="column col-12">
+        <form name="quiz_form" method="post">
+            <div class="columns">
+                {% for question in data.questions %}
+                <input type="hidden" value="{{ question.id }}">
+                <div class="column col-12">
+                    <div class="hero hero-sm bg-gray my-2">
+                        <div class="hero-body">
+                            <h2>{{ loop.index }}) {{ question.question_text }}</h2>
+
+                            <div class="form-group">
+                                <div class="columns">
+                                    {% set outer_loop = loop %}
+                                    {% for option in question.options %}
+                                    <div class="column col-12">
+                                        <label class="form-radio">
+                                            <input type="radio" required name="{{ question.id }}" value="{{ option.id }}">
+                                            <i class="form-icon"></i>{{ option.title }}</label>
+                                    </div>
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="column col-2 col-mx-auto my-2">
+                    <button type="submit" class="btn btn-lg btn-primary btn-block my-2">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

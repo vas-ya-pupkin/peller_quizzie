@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% include 'header.html' %}
+    {% block head %}
+    <title>{% block title %}{% endblock %} - Quizzie</title>
+    {% endblock %}
+</head>
+<body>
+<header class="navbar">
+    <section class="navbar-section">
+        {% if logged %}
+        <a href="/quiz/list" class="btn btn-link">Опросы</a>
+        <a href="/quiz/add" class="btn btn-link">Добавить опрос</a>
+        <a href="/signout" class="btn btn-link">Выход</a>
+        {% else %}
+        <a href="/signin" class="btn btn-link">Вход</a>
+        <a href="/signup" class="btn btn-link">Регистрация</a>
+        {% endif %}
+    </section>
+</header>
+<div class="container grid-lg">
+    {% block content %}{% endblock %}
+</div>
+<div id="footer">
+    {% block footer %}{% endblock %}
+</div>
+</body>
+</html>

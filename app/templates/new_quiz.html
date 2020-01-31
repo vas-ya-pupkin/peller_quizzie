@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}New quiz{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="columns">
+
+    <div class="text-center column col-12 my-2">
+        <h1>Новый тест</h1>
+    </div>
+
+    <div class="column col-12">
+        <div class="columns">
+            <div class="column col-4"></div>
+            <div class="text-center column col-4 my-2">
+                <input type="text" class="form-input" id="quiz_title" placeholder="Название">
+            </div>
+            <div class="column col-4"></div>
+            {% for i in range(questions) %}
+            <div class="question">
+                <div class="column col-12">
+                    <div class="hero hero-sm bg-gray my-2">
+                        <div class="hero-body">
+                            <div class="form-group">
+                                <div class="columns">
+                                    <div class="column col-12">
+                                        <h2>{{ loop.index }}.</h2>
+                                        <label>
+                                            <textarea class="form-input question-title" name="question-{{ loop.index }}"
+                                                      placeholder="Вопрос" rows="2"></textarea>
+                                        </label>
+                                    </div>
+
+                                    {% set outer_loop = loop %}
+                                    {% for i in range(options) %}
+                                    <div class="column col-1">
+                                        <label class="form-radio">
+                                            <input type="radio" class="correct" name="answer-{{ outer_loop.index }}"
+                                                   value="{{ loop.index0 }}">
+                                            <i class="form-icon"></i>
+                                        </label>
+                                    </div>
+                                    <div class="column col-5">
+                                        <label class="form-text">
+                                            <input type="text" name="option-{{ loop.index0 }}"
+                                                   class="form-input option-title" placeholder="Ответ {{ loop.index }}">
+                                        </label>
+                                    </div>
+                                    <div class="column col-6"></div>
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="column col-2 col-mx-auto my-2">
+                <button onclick="send()" class="btn btn-lg btn-primary btn-block my-2">Submit</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function send() {
+        let fd = {};
+
+        fd['title'] = $("#quiz_title").val();
+        fd['questions'] = [];
+
+        $(".question").each(function (i, obj) {
+            let data = {};
+            data['question_title'] = $(obj).find(".question-title").val();
+            data['options'] = [];
+
+            $(obj).find(".option-title").each(function (j, opt) {
+                let option_title = $(opt).val() || '';
+                data['options'].push({'option_title': option_title, 'correct': false});
+            });
+
+            let correct_index = $(obj).find(".correct:checked").val();
+            data['options'][parseInt(correct_index)]['correct'] = true;
+
+            fd['questions'].push(data);
+        });
+
+        $.ajax({
+            url: $(location).attr('href'),
+            data: JSON.stringify(fd),
+            contentType: 'application/json; charset=utf-8',
+            dataType: "json",
+            type: 'POST',
+        }).done(function (data) {
+                if(data['success'])
+                    $(location).attr('href', '/quiz/list')
+            });
+    }
+</script>
+{% endblock %}
