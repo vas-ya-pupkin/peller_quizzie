@@ -1,23 +1,16 @@
-from jinja2 import Environment, PackageLoader
 from sanic.exceptions import abort
+from sanic.response import redirect, json
 from sanic_auth import User, Auth
 from sanic_session import Session, InMemorySessionInterface
-from sanic.response import html, redirect, json
 
 from app import app
 from .utils import get_quiz_data, get_quizzes_list, is_quiz_info_valid, add_quiz_to_db, count_correct_answers, signup, \
-    get_user_id
+    get_user_id, render_template
 
 app.config.AUTH_LOGIN_ENDPOINT = 'signin'
 auth = Auth(app)
 
 Session(app, interface=InMemorySessionInterface())
-
-env = Environment(
-    loader=PackageLoader('app', 'templates'),
-    trim_blocks=True,
-    lstrip_blocks=True,
-)  # загружаем шаблоны
 
 
 @app.route("/")
@@ -28,8 +21,7 @@ async def index(request):
 @app.route('/signup', methods=['GET', 'POST'])
 async def signup_handler(request):
     if request.method == 'GET':
-        template = env.get_template('signup.html')
-        return html(template.render())
+        return render_template('signup.html')
 
     elif request.method == 'POST':
         params = dict(
@@ -63,16 +55,14 @@ async def signin(request):
             return redirect('/quiz/list')
         else:
             abort(401)
-    template = env.get_template('signin.html')
-    return html(template.render())
+    return render_template('signin.html')
 
 
 @app.route('/quiz/add', methods=['GET', 'POST'])
 @auth.login_required
 async def add_quiz_handler(request):
     if request.method == 'GET':
-        template = env.get_template('new_quiz.html')
-        return html(template.render(questions=1, options=4, logged=True))
+        return render_template('new_quiz.html', questions=1, options=4, logged=True)
     elif request.method == 'POST':
         quiz_info = request.json
 
@@ -86,8 +76,7 @@ async def add_quiz_handler(request):
 @auth.login_required
 async def quiz_list_handler(request):
     quizzes = get_quizzes_list()
-    template = env.get_template('quizzes_list.html')
-    return html(template.render(quizzes=quizzes, logged=True))
+    return render_template('quizzes_list.html', quizzes=quizzes, logged=True)
 
 
 @app.route('/quiz/<quiz_id:int>', methods=['GET', 'POST'])
@@ -97,14 +86,12 @@ async def quiz_handler(request, quiz_id):
         data = get_quiz_data(quiz_id)  # информация об опросе
         if not data:
             abort(404)
-
-        template = env.get_template('quiz.html')
-        return html(template.render(data=data, logged=True))
+        return render_template('quiz.html', data=data, logged=True)
 
     elif request.method == 'POST':
         correct, total = count_correct_answers(request.form)
-        template = env.get_template('results.html')
-        return html(template.render(correct=correct, total=total, logged=True))  # счетчик правильных ответов/всего
+        return render_template('results.html', correct=correct, total=total,
+                               logged=True)  # счетчик правильных ответов/всего
 
 
 @app.route('/signout')

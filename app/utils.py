@@ -1,11 +1,30 @@
 import hashlib
 from typing import Dict, List, Any, Tuple
 
+from jinja2 import Environment, PackageLoader
 from peewee import DatabaseError, DoesNotExist
 from playhouse.shortcuts import model_to_dict
 from sanic.log import logger
+from sanic.response import html
 
 from .models import Quiz, Question, Option, User, database
+
+env = Environment(
+    loader=PackageLoader('app', 'templates'),
+    trim_blocks=True,
+    lstrip_blocks=True,
+)  # загружаем шаблоны
+
+
+def render_template(name, **kwargs):
+    """
+    Возвращает HTML собранного шаблона с параметрами
+    :param name: Имя файла
+    :param kwargs: Переменные шаблона
+    :return:
+    """
+    template = env.get_template(name)
+    return html(template.render(**kwargs))
 
 
 def to_sha256(string: str) -> str:
